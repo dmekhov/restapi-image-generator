@@ -24,10 +24,10 @@ class RatioRequest extends FormRequest
     public function rules()
     {
         return [
-            'width' => 'required|between:100,500',
-            'height' => 'required|between:100,500',
-            'background' => 'required|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
-            'color' => 'required|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', // todo вынести в кастомное правило
+            'width' => 'required|integer|between:100,500',
+            'height' => 'required|integer|between:100,500',
+            'background' => ['required', 'regex:/^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'color' => ['required', 'regex:/^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'], // todo вынести в кастомное правило
         ];
     }
 }

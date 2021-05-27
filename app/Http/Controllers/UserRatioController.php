@@ -3,19 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\Ratio;
+use App\DTO\RatioConfig;
 use App\Http\Requests\RatioRequest;
 
 class UserRatioController extends Controller
 {
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function show(RatioRequest $request, User $user)
+    public function show(RatioRequest $request, User $user, Ratio $ratio)
     {
-        return $user;
+        $params = RatioConfig::fromRequest($request);
+        $img = $ratio->image('69%', $params); // todo передавать рейтинг пользователя
+
+        return $img->response(Ratio::EXTENSION);
     }
 }
