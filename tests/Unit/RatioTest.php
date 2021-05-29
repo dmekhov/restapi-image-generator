@@ -3,47 +3,60 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use App\Services\Ratio;
-use App\DTO\RatioConfig;
-use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RatioTest extends TestCase
 {
+    use RefreshDatabase;
 
     /**
-     * Проверка создания изображения с заданными размерами.
+     * Проверка возвращения среднего значения рейтинга пользователя.
+     * Все создаваемые значения = 10, среднее 10.
      */
-    public function test_make_image()
+    public function test_get_user_ratio()
     {
-        $width = 110;
-        $height = 101;
+        $user = User::factory()->hasReviews(10, ['ratio' => 10])->create();
 
-        $ratio = new Ratio();
-        $config = new RatioConfig($width, $height, '000', 'fff');
-
-        $img = $ratio->image('text', $config);
-
-        $this->assertEquals($width, $img->getWidth());
-        $this->assertEquals($height, $img->getHeight());
+        $this->assertEquals(10, $user->ratio());
     }
 
     /**
-     * Проверка создания объекта конфигурации из Request.
+     * Проверка возвращения среднего значения рейтинга пользователя.
+     * Среднее между 10 и 5 = 7,5. Округляем до 8.
      */
-    public function test_make_config()
+    public function test_get_user_ratio_with_avg_value()
     {
-        $width = 110;
-        $height = 101;
-        $background = '000';
-        $color = 'fff';
+        $user = User::factory()->create();
+        $user->reviews()->createMany(
+            [
+                ['ratio' => 10, 'published' => true],
+                ['ratio' => 5, 'published' => true],
+            ]
+        );
 
-        $request = new Request(compact('width', 'height', 'background', 'color'));
+        $this->assertEquals(8, $user->ratio());
+    }
 
-        $config = RatioConfig::fromRequest($request);
+    /**
+     * Проверка что при отсутствии отзывов пользователя возвращается рейтинг 0.
+     * todo уточнить у заказчика корректность такого сценария.
+     */
+    public function test_get_user_ratio_without_reviews()
+    {
+        $user = User::factory()->create();
 
-        $this->assertEquals($width, $config->width());
-        $this->assertEquals($height, $config->height());
-        $this->assertEquals("#$background", $config->background());
-        $this->assertEquals("#$color", $config->color());
+        $this->assertEquals(0, $user->ratio());
+    }
+
+    /**
+     * Проверка, что при отсутствии опубликованных отзывов возвращается рейтинг 0.
+     * todo уточнить у заказчика корректность такого сценария.
+     */
+    public function test_get_user_ratio_without_published_reviews()
+    {
+        $user = User::factory()->hasReviews(10, ['published' => false])->create();
+
+        $this->assertEquals(0, $user->ratio());
     }
 }
