@@ -4,7 +4,7 @@ namespace App\DTO;
 
 use Illuminate\Http\Request;
 
-class RatioConfig
+class WidgetParams
 {
     public function __construct(
         private int $width,

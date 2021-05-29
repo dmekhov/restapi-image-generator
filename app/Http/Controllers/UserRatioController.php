@@ -3,17 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Services\Ratio;
-use App\DTO\RatioConfig;
+use App\Services\Widget;
+use App\DTO\WidgetParams;
 use App\Http\Requests\RatioRequest;
 
 class UserRatioController extends Controller
 {
-    public function show(RatioRequest $request, User $user, Ratio $ratio)
+    public function show(RatioRequest $request, User $user, Widget $widget)
     {
-        $params = RatioConfig::fromRequest($request);
-        $img = $ratio->image('69%', $params); // todo передавать рейтинг пользователя
+        if (!$user->isActive()) {
+            abort(404);
+        }
 
-        return $img->response(Ratio::EXTENSION);
+        $ratio = $user->ratio();
+
+        $params = WidgetParams::fromRequest($request);
+        $img = $widget->image("$ratio%", $params);
+
+        return $img->response(Widget::EXTENSION);
     }
 }

@@ -12,4 +12,19 @@ class User extends Model
     public const STATUS_INACTIVE = 0;
     public const STATUS_ACTIVE = 1;
     public const STATUS_BANNED = 2;
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function ratio()
+    {
+        return (int) round($this->reviews()->published()->avg('ratio') ?? 0);
+    }
 }
