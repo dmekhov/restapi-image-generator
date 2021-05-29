@@ -42,6 +42,10 @@ php artisan migrate
 php artisan db:seed --class=UserWithReviewsSeeder
 ```
 
+### Testing
+
+`sail test` (with docker) or `php artisan test` (without)
+
 ---
 
 [Task description (russian)](task.md)

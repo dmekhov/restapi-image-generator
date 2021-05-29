@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Services\Widget;
 use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Services\Widget;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UserRatioTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     /**
      * Проверка возвращаемого изображения.
